@@ -1,5 +1,5 @@
 ﻿# Hi, You may Splat TDOM
-Good day. Using implicit methods to reconstruct TDOM can make a meaningful thing. Below is the experimental version of the code we utilized. While it hasn’t been very elegant and meticulously organized yet, we are still more than happy to share it with you. If this resource proves helpful for graduate students and researchers working on similar projects, it would be great.
+Using 3DGS methods to reconstruct TDOM can make a meaningful thing. Below is the experimental version of the code we utilized. While it hasn’t been very elegant and meticulously organized yet, we are still more than happy to share it with you. If this resource proves helpful for graduate students and researchers working on similar projects, it would be great.
 
 ## Environmental Setups
 The scene partitioning section of this code is based on the unofficial good implementation by KangPeiLun. If you're interested in vastGaussian, please click here:
@@ -186,5 +186,4 @@ python ortho_splat.py \
   ```
 Note that the *FAGK Gaussian kernel* is applied in the code. You can apply the same logic to other Gaussian-based methods, which might yield even better and better results.
 
-That's all. Wishing you all the best. 
 
