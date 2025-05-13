@@ -186,3 +186,14 @@ python ortho_splat.py \
   ```
 Note that the *FAGK Gaussian kernel* is applied in the code. You can apply the same logic to other Gaussian-based methods, which might yield even better and better results.
 
+###  📚 Citation
+If you find this work helpful in your research or use our code/models, please consider citing our paper:
+@misc{Tortho-Gaussian,
+  title       = {Tortho-Gaussian: Splatting True Digital Orthophoto Maps},
+  author      = {Xin Wang and Wendi Zhang and Hong Xie and Haibin Ai and Qiangqiang Yuan and Zongqian Zhan},
+  year        = {2024},
+  archivePrefix = {arXiv},
+  eprint      = {2144.19594},
+  primaryClass = {cs.CV}
+}
+

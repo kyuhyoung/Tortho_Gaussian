@@ -186,4 +186,3 @@ python ortho_splat.py \
   ```
 Note that the *FAGK Gaussian kernel* is applied in the code. You can apply the same logic to other Gaussian-based methods, which might yield even better and better results.
 
-
