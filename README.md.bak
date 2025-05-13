@@ -1,5 +1,5 @@
 ﻿# Hi, You may Splat TDOM
-Using 3DGS methods to reconstruct TDOM can make a meaningful thing. Below is the experimental version of the code we utilized. While it hasn’t been very elegant and meticulously organized yet, we are still more than happy to share it with you. If this resource proves helpful for graduate students and researchers working on similar projects, it would be great.
+Using 3DGS methods to reconstruct TDOM can be a very useful alternaitive in relevant photogrammetric applications. Below is the experimental version of the code we utilized to splat TDOM using 3DGS. While it hasn’t been very elegant and meticulously organized yet, we are still more than happy to share it with you. If this resource proves helpful for graduate students and researchers working on similar projects, it would be great.
 
 ## Environmental Setups
 The scene partitioning section of this code is based on the unofficial good implementation by KangPeiLun. If you're interested in vastGaussian, please click here:
@@ -185,4 +185,15 @@ python ortho_splat.py \
   --height 2000
   ```
 Note that the *FAGK Gaussian kernel* is applied in the code. You can apply the same logic to other Gaussian-based methods, which might yield even better and better results.
+
+###  📚 Citation
+If you find this work helpful in your research or use our code/models, please consider citing our paper:
+@misc{Tortho-Gaussian,
+  title       = {Tortho-Gaussian: Splatting True Digital Orthophoto Maps},
+  author      = {Xin Wang and Wendi Zhang and Hong Xie and Haibin Ai and Qiangqiang Yuan and Zongqian Zhan},
+  year        = {2024},
+  archivePrefix = {arXiv},
+  eprint      = {2144.19594},
+  primaryClass = {cs.CV}
+}
 

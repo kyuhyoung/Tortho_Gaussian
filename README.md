@@ -188,6 +188,7 @@ Note that the *FAGK Gaussian kernel* is applied in the code. You can apply the s
 
 ###  📚 Citation
 If you find this work helpful in your research or use our code/models, please consider citing our paper:
+
 @misc{Tortho-Gaussian,
   title       = {Tortho-Gaussian: Splatting True Digital Orthophoto Maps},
   author      = {Xin Wang and Wendi Zhang and Hong Xie and Haibin Ai and Qiangqiang Yuan and Zongqian Zhan},
