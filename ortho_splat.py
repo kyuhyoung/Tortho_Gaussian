@@ -271,11 +271,13 @@ def main():
 
     args = parser.parse_args(sys.argv[1:])
 
+    #print(f'args : {args}');    exit()
     args.model_path = os.path.join("./output", args.exp_name)
+    #print(f'args.model_path : {args.model_path}');  exit()
     args.man_trans = get_man_trans(args)
     safe_state(args.quiet)
 
-    print("Rendering model at:", args.model_path)
+    print("Rendering model at:", args.model_path);  #exit()
     print("Manhattan Transformation:", args.man_trans)
 
     render_sets(

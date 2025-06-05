@@ -19,7 +19,7 @@
 #   --camera_idx 200
 
 python ortho_splat.py \
-    -s ./data/phantom3-ieu/ \
+    --source_path ./data/phantom3-ieu/ \
     --exp_name phantom3-ieu\
     --manhattan \
     --resolution 1 \

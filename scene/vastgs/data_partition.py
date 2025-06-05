@@ -58,6 +58,7 @@ class ProgressiveDataPartitioning:
         if not os.path.exists(self.partition_visible_dir): os.makedirs(
             self.partition_visible_dir)
         self.fig, self.ax = self.draw_pcd(self.pcd, train_cameras)
+        #aa = bb
         self.run_DataPartition(train_cameras)
 
     def draw_pcd(self, pcd, train_cameras):
@@ -208,14 +209,16 @@ class ProgressiveDataPartitioning:
 
     def Camera_position_based_region_division(self, train_cameras):
         m, n = self.m_region, self.n_region  # m=2, n=4
+        #print(f'm : {m}, n : {n}'); exit()  #   m : 2, n : 2
         CameraPose_list = []
         camera_centers = []
         for idx, camera in enumerate(train_cameras):
             pose = np.array(camera.camera_center.cpu())
+            #print(f'idx : {idx}, camera.image_name : {camera.image_name}, pose : {pose}')
             camera_centers.append(pose)
             CameraPose_list.append(
                 CameraPose(camera=camera, pose=pose))
-
+        #exit()
         storePly(os.path.join(self.partition_dir, 'camera_centers.ply'), np.array(camera_centers),
                  np.zeros_like(np.array(camera_centers)))
 
@@ -223,20 +226,28 @@ class ProgressiveDataPartitioning:
         total_camera = len(CameraPose_list)
         num_of_camera_per_m_partition = total_camera // m
         sorted_CameraPose_by_x_list = sorted(CameraPose_list, key=lambda x: x.pose[0])
-        # print(sorted_CameraPose_by_x_list)
+        #print(f'num_of_camera_per_m_partition : {num_of_camera_per_m_partition}');  exit()
+        #print(f'sorted_CameraPose_by_x_list : {sorted_CameraPose_by_x_list}');  exit()
         for i in range(m):
             m_partition_dict[str(i + 1)] = {"camera_list": sorted_CameraPose_by_x_list[
                                                            i * num_of_camera_per_m_partition:(
                                                                                                          i + 1) * num_of_camera_per_m_partition]}
+            #print(f'i : {i} / m : {m}')
             if i != m - 1:
+                #print('aaa')
                 m_partition_dict[str(i + 1)].update(
                     {"x_mid_camera": sorted_CameraPose_by_x_list[(i + 1) * num_of_camera_per_m_partition - 1]})
             else:
+                #print('bbb')
                 m_partition_dict[str(i + 1)].update({"x_mid_camera": None})
+            #print(f'm_partition_dict[str(i + 1)] : {m_partition_dict[str(i + 1)]}')
+            #exit()
+        #print(f'm_partition_dict : {m_partition_dict}');    exit()
         if total_camera % m != 0:
             m_partition_dict[str(m)]["camera_list"].extend(
                 sorted_CameraPose_by_x_list[m * num_of_camera_per_m_partition:])
 
+        #print(f'm_partition_dict : {m_partition_dict}');    exit()
         partition_dict = {}
         for partition_idx, cameras in m_partition_dict.items():
             partition_total_camera = len(cameras["camera_list"])
@@ -257,11 +268,17 @@ class ProgressiveDataPartitioning:
                 partition_dict[f"{partition_idx}_{n}"]["camera_list"].extend(
                     sorted_CameraPose_by_z_list[n * num_of_camera_per_n_partition:])
 
+        #print(f'partition_dict : {partition_dict}');    exit()
         return partition_dict
 
     def extract_point_cloud(self, pcd, bbox):
+        #print(f'bbox : {bbox}');    exit()
         mask = (pcd.points[:, 0] >= bbox[0]) & (pcd.points[:, 0] <= bbox[1]) & (
                 pcd.points[:, 2] >= bbox[2]) & (pcd.points[:, 2] <= bbox[3])
+        mins = pcd.points.min(axis = 0);    maxs = pcd.points.max(axis = 0)
+        #print("xmin, ymin, zmin = ", mins); print("xmax, ymax, zmax = ", maxs); exit()
+        #print(f'pcd.points.shape : {pcd.points.shape}');    exit()  # (25010, 3)
+        #print(f'mask.sum() : {mask.sum()}');    exit()
         points = pcd.points[mask]
         colors = pcd.colors[mask]
         normals = pcd.normals[mask]
@@ -281,6 +298,7 @@ class ProgressiveDataPartitioning:
         partition_list = []
         point_num = 0
         point_extend_num = 0
+        #n_partition = len(partition_dict);  print(f'n_partition : {n_partition}');  exit()
         for partition_idx, camera_list in partition_dict.items():
             min_x, max_x, min_z, max_z = refined_ori_bbox[partition_idx]
             ori_camera_bbox = [min_x, max_x, min_z, max_z]
@@ -379,6 +397,7 @@ class ProgressiveDataPartitioning:
         return points_image, points_image[mask], mask
 
     def Visibility_based_camera_selection(self, partition_list):
+        print(f'partition_list : {partition_list}');    exit()
         add_visible_camera_partition_list = copy.deepcopy(partition_list)
         client = 0
         for idx, partition_i in enumerate(partition_list):
