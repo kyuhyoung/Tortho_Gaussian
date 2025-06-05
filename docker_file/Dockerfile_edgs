@@ -1,0 +1,73 @@
+# Use a Miniconda base image
+FROM continuumio/miniconda3
+
+# Set non-interactive mode to avoid prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget curl git build-essential libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create and activate the Conda environment with Python 3.9
+RUN conda create -n dogs python=3.9 -y
+
+# Install PyTorch and CUDA
+RUN conda run -n dogs conda install pytorch==2.0.1 torchvision==0.15.2 pytorch-cuda=11.8 -c pytorch -c nvidia
+
+RUN conda run -n dogs conda install -c "nvidia/label/cuda-11.8.0" cuda
+
+# Install additional packages inside Conda environment
+RUN conda run -n dogs pip install tqdm scikit-image opencv-python configargparse lpips \
+    imageio-ffmpeg easydict kornia lpips tensorboard visdom tensorboardX matplotlib plyfile trimesh \
+    h5py pandas omegaconf PyMCubes Ninja pyransac3d einops pyglet pre-commit pylint GPUtil \
+    open3d pyrender
+
+RUN conda run -n dogs pip install -U scikit-learn
+
+RUN conda run -n dogs conda install conda-forge::opencv
+RUN apt-get update && apt-get install -y fish
+
+RUN conda run -n dogs conda install -y pytorch3d -c pytorch3d -c conda-forge
+RUN conda run -n dogs conda install pytorch-scatter -c pyg
+RUN conda run -n dogs conda remove ffmpeg --force
+
+
+RUN apt-get install -y gcc-11 g++-11
+ENV CC=/usr/bin/gcc-11
+ENV CXX=/usr/bin/g++-11
+
+#COPY submodules submodules
+#RUN conda run -n dogs pip install submodules/simple-knn
+#RUN conda run -n dogs pip install /subs/fused-ssim
+#RUN conda run -n dogs pip install /subs/diff-gaussian-rasterization
+
+#RUN echo $CUDA_HOME
+## Install third-party dependencies
+#RUN conda run -n dogs python -m pip install /subs/simple-knn /subs/fused-ssim /subs/diff-gaussian-rasterization
+
+## Clone and install additional repositories
+#WORKDIR workspace
+RUN mkdir 3rd_party && cd 3rd_party && \
+    git clone https://github.com/cvg/sfm-disambiguation-colmap.git && \
+    cd sfm-disambiguation-colmap && \
+    conda run -n dogs python -m pip install -e . && \
+    cd ..
+
+RUN git clone --recursive https://github.com/cvg/Hierarchical-Localization && \
+    cd Hierarchical-Localization && \
+    conda run -n dogs python -m pip install -e . && \
+    cd ..
+
+
+RUN echo ". activate dogs" >> ~/.bashrc
+RUN apt install -y colmap
+RUN apt install -y xvfb
+RUN apt update -y && apt install -y psmisc
+RUN conda run -n dogs pip install imagecodecs
+RUN conda run -n dogs pip install wandb hydra-core torchmetrics rich imageio
+RUN conda run -n dogs pip install shapely
+
+# Set the default shell to bash and activate Conda environment
+SHELL ["/bin/bash", "-c", "source activate dogs && bash"]
+RUN conda init bash && conda info --envs
