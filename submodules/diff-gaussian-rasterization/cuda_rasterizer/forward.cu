@@ -208,10 +208,10 @@ __global__ void preprocessCUDA(
     float3 p_view;
     if (!in_frustum(idx, orig_points, viewmatrix, projmatrix, prefiltered, p_view))
     {
-        printf("out of frustum\n"); assert(false);
+        //printf("out of frustum\n"); //assert(false);    //  Nothing out of frustum
         return;
     }
-    printf("inside of frustum\t");  //assert(false);
+    //printf("inside of frustum\t");  //assert(false); all inside of frustum
 
     float3 p_orig = { orig_points[3 * idx], orig_points[3 * idx + 1], orig_points[3 * idx + 2] };
     float4 p_hom = transformPoint4x4(p_orig, projmatrix);
@@ -233,7 +233,11 @@ __global__ void preprocessCUDA(
 
     float det = (cov.x * cov.z - cov.y * cov.y);
     if (det == 0.0f)
+    {
+        //printf("zero det : %f\t", det); //  nothing has zero det 
         return;
+    }
+    //printf("positive det : %f\t", det);   //  all positive det 
     float det_inv = 1.f / det;
     float3 conic = { cov.z * det_inv, -cov.y * det_inv, cov.x * det_inv };
 
@@ -244,9 +248,15 @@ __global__ void preprocessCUDA(
     float2 point_image = { ndc2Pix(p_proj.x, W), ndc2Pix(p_proj.y, H) };
     uint2 rect_min, rect_max;
     getRect(point_image, my_radius, rect_min, rect_max, grid);
+    int wid = rect_max.x - rect_min.x, hei = rect_max.y - rect_min.y;
     if ((rect_max.x - rect_min.x) * (rect_max.y - rect_min.y) == 0)
+    {
+        //printf("rectangle is degenerated : wid : %d, hei : %d\t", wid, hei);
+        //assert(false);
+        //  all positive det 
         return;
-
+    }
+    //printf("rectangle is not line : wid : %d, hei : %d\t", wid, hei);   //  all positive det 
     if (colors_precomp == nullptr)
     {
         glm::vec3 result = computeColorFromSH(idx, D, M, (glm::vec3*)orig_points, *cam_pos, shs, clamped1);
