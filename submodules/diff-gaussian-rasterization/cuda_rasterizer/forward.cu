@@ -207,7 +207,11 @@ __global__ void preprocessCUDA(
 
     float3 p_view;
     if (!in_frustum(idx, orig_points, viewmatrix, projmatrix, prefiltered, p_view))
+    {
+        printf("out of frustum\n"); assert(false);
         return;
+    }
+    printf("inside of frustum\t");  //assert(false);
 
     float3 p_orig = { orig_points[3 * idx], orig_points[3 * idx + 1], orig_points[3 * idx + 2] };
     float4 p_hom = transformPoint4x4(p_orig, projmatrix);

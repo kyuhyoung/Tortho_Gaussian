@@ -135,6 +135,7 @@ def readColmapCamerasPartition(cam_extrinsics, cam_intrinsics, images_folder, ma
 
 
 def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder, man_trans):
+    #aa = bb
     cam_infos = []
     for idx, key in enumerate(cam_extrinsics):
         sys.stdout.write('\r')
@@ -296,6 +297,7 @@ def storePly(path, xyz, rgb):
 
 
 def readColmapSceneInfo(path, images, eval, llffhold=83):
+    #print(f'path : {path}, images : {images}, eval : {eval}'); exit()
     try:
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.bin")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.bin")
@@ -308,8 +310,7 @@ def readColmapSceneInfo(path, images, eval, llffhold=83):
         cam_intrinsics = read_intrinsics_text(cameras_intrinsic_file)
 
     reading_dir = "images" if images == None else images
-    cam_infos_unsorted = readColmapCameras(cam_extrinsics=cam_extrinsics, cam_intrinsics=cam_intrinsics,
-                                           images_folder=os.path.join(path, reading_dir), man_trans=None)
+    cam_infos_unsorted = readColmapCameras(cam_extrinsics = cam_extrinsics, cam_intrinsics = cam_intrinsics, images_folder=os.path.join(path, reading_dir), man_trans = None)
     cam_infos = sorted(cam_infos_unsorted.copy(), key=lambda x: x.image_name)
 
     if eval:

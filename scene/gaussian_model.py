@@ -281,6 +281,7 @@ class GaussianModel:
             self._opacity_features_rest.data.zero_()
 
     def load_ply(self, path):
+        #print(f'path : {path}');    exit()
         plydata = PlyData.read(path)
 
         xyz = np.stack((np.asarray(plydata.elements[0]["x"]),
@@ -489,6 +490,10 @@ class GaussianModel:
 
     def densify_and_clone(self, grads, grad_threshold, scene_extent):
         # Extract points that satisfy the gradient condition
+        
+        t0 = torch.norm(grads, dim=-1); t1 = t0.min().item();   t2 = t0.max().item();  
+        if t1 != t2:
+            print(f't1 : {t1}, t2 : {t2}');    exit()
         selected_pts_mask = torch.where(torch.norm(grads, dim=-1) >= grad_threshold, True, False)
         selected_pts_mask = torch.logical_and(selected_pts_mask,
                                               torch.max(self.get_scaling,
@@ -507,9 +512,14 @@ class GaussianModel:
                                    new_opacity_features_rest, new_scaling, new_rotation)
 
     def densify_and_prune(self, max_grad, min_opacity, extent, max_screen_size):
+        #'''
+        t0 = self.xyz_gradient_accum; t1 = t0.min();   t2 = t0.max();  
+        #if t1 != t2:
+        print(f't1 : {t1}, t2 : {t2}');    #exit()
+        #'''
         grads = self.xyz_gradient_accum / self.denom
         grads[grads.isnan()] = 0.0
-
+        #print(f'max_grad : {max_grad}, extent : {extent}'); exit()
         self.densify_and_clone(grads, max_grad, extent)
         self.densify_and_split(grads, max_grad, extent)
 
@@ -533,6 +543,6 @@ class GaussianModel:
         torch.cuda.empty_cache()
 
     def add_densification_stats(self, viewspace_point_tensor, update_filter):
-        self.xyz_gradient_accum[update_filter] += torch.norm(viewspace_point_tensor.grad[update_filter, :2], dim=-1,
-                                                             keepdim=True)
+        print(f'update_filter.shape : {update_filter.shape}, update_filter : {update_filter}, viewspace_point_tensor.shape : {viewspace_point_tensor.shape}');  exit()
+        self.xyz_gradient_accum[update_filter] += torch.norm(viewspace_point_tensor.grad[update_filter, :2], dim=-1, keepdim = True)
         self.denom[update_filter] += 1

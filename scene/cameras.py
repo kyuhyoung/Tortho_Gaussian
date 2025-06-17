@@ -96,8 +96,8 @@ class Camera(nn.Module):
         self.camera_center = self.world_view_transform.inverse()[3, :3]
 
     def __str__(self):
-        return (f"Camera(uid={self.uid}, colmap_id={self.colmap_id}, "
-                f"position={self.T}, rotation={self.R}, "
+        return (f"Camera(uid={self.uid}, colmap_id={self.colmap_id}, \n"
+                f"position={self.T}, \nrotation={self.R}, \n"
                 f"FoVx={self.FoVx}, FoVy={self.FoVy}, image_name={self.image_name})")
 
 

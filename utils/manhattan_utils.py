@@ -32,8 +32,10 @@ def create_man_rans(position, rotation):
 
 
 def get_man_trans(lp):
+    #print(f'lp : {lp}');    exit()
     lp.pos = [float(pos) for pos in lp.pos.split(" ")]
     lp.rot = [float(rot) for rot in lp.rot.split(" ")]
+    #print(f'lp.pos : {lp.pos}');    print(f'lp.rot : {lp.rot}');    exit()
 
     man_trans = None
     if lp.manhattan and lp.platform == "tj":
@@ -45,5 +47,5 @@ def get_man_trans(lp):
         man_trans[:3, :3] = rot
         man_trans[:3, -1] = np.array(lp.pos)
         man_trans[3, 3] = 1
-
+    #print(f'man_trans : \n{man_trans}');  exit()
     return man_trans

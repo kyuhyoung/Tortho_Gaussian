@@ -40,7 +40,7 @@ class Scene:
 
         self.train_cameras = {}
         self.test_cameras = {}
-
+        #print(f'args.source_path : {args.source_path}');    exit()
         if os.path.exists(os.path.join(args.source_path, "sparse")):
             scene_info = sceneLoadTypeCallbacks["Colmap"](args.source_path, args.images, args.eval)
         elif os.path.exists(os.path.join(args.source_path, "transforms_train.json")):
@@ -69,7 +69,7 @@ class Scene:
             random.shuffle(scene_info.test_cameras)  # Multi-res consistent random shuffling
 
         self.cameras_extent = scene_info.nerf_normalization["radius"]
-
+        #print(f'resolution_scales : {resolution_scales}');    exit()
         for resolution_scale in resolution_scales:
             print("Loading Training Cameras")
             self.train_cameras[resolution_scale] = cameraList_from_camInfos(scene_info.train_cameras, resolution_scale,
@@ -79,10 +79,12 @@ class Scene:
                                                                            args)
 
         if self.loaded_iter:
+            #print(f'self.gaussians._xyz.shape b4 : {self.gaussians._xyz.shape}') 
             self.gaussians.load_ply(os.path.join(self.model_path,
                                                  "point_cloud",
                                                  "iteration_" + str(self.loaded_iter),
                                                  "point_cloud_1.ply"))
+            #print(f'self.gaussians._xyz.shape after : {self.gaussians._xyz.shape}');    exit() 
         else:
             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
 

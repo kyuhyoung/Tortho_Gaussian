@@ -224,11 +224,10 @@ int CudaRasterizer::Rasterizer::forward(
 {
 	const float focal_y = height / (2.0f * tan_fovy);
 	const float focal_x = width / (2.0f * tan_fovx);
-
+    //std::cout << "P 1 : " << P << std::endl;    exit(0);    //  25263
 	size_t chunk_size = required<GeometryState>(P);
 	char* chunkptr = geometryBuffer(chunk_size);
 	GeometryState geomState = GeometryState::fromChunk(chunkptr, P);
-
 	if (radii == nullptr)
 	{
 		radii = geomState.internal_radii;
@@ -281,11 +280,17 @@ int CudaRasterizer::Rasterizer::forward(
 	// Compute prefix sum over full list of touched tile counts by Gaussians
 	// E.g., [2, 3, 0, 2, 1] -> [2, 5, 5, 7, 8]
 	CHECK_CUDA(cub::DeviceScan::InclusiveSum(geomState.scanning_space, geomState.scan_size, geomState.tiles_touched, geomState.point_offsets, P), debug)
-
+    /*
+    std::cout << "P : " << P << std::endl;  //  25260
+	std::vector<int> tmp(std::min(8, P));
+	CHECK_CUDA(cudaMemcpy(tmp.data(), geomState.point_offsets, tmp.size() * sizeof(int), cudaMemcpyDeviceToHost), debug);
+    for (int i = 0; i < tmp.size(); ++i) std::cout << tmp[i] << " ";    //  0   0   0 0  0   0   0   0   
+    std::cout << std::endl; exit(0);
+    */
 	// Retrieve total number of Gaussian instances to launch and resize aux buffers
 	int num_rendered;
 	CHECK_CUDA(cudaMemcpy(&num_rendered, geomState.point_offsets + P - 1, sizeof(int), cudaMemcpyDeviceToHost), debug);
-
+    //std::cout << "num_rendered : " << num_rendered << std::endl;    //exit(0);    // 0
 	size_t binning_chunk_size = required<BinningState>(num_rendered);
 	char* binning_chunkptr = binningBuffer(binning_chunk_size);
 	BinningState binningState = BinningState::fromChunk(binning_chunkptr, num_rendered);

@@ -115,11 +115,14 @@ def get_closest_camera_pose(camera_file, visualize=True, camera_idx=-1):
         rotations.append([list(map(float, row.split())) for row in rotation_str])
 
     positions = np.array(positions)
-
+    #print(f'camera_idx : {camera_idx}');    -1 exit()
     if camera_idx == -1:
         center = np.mean(positions, axis=0)
+        #print(f'center : {center}');    #exit()
         distances = np.linalg.norm(positions - center, axis=1)
+        #print(f'distances : {distances}');    #exit()
         idx = np.argmin(distances)
+        #print(f'idx : {idx}');    exit()
     else:
         idx = camera_idx
 
@@ -139,6 +142,7 @@ def get_closest_camera_pose(camera_file, visualize=True, camera_idx=-1):
         plt.savefig("camera_positions.png", dpi=300)
         plt.close()
 
+    t0 = np.array(rotations[idx]).reshape(3, 3);    t1 = torch.tensor(positions[idx]).float();  print(f't0 : \n{t0}, t1 : \n{t1}'); exit()
     return np.array(rotations[idx]).reshape(3, 3), torch.tensor(positions[idx]).float()
 
 def render_single_camera_view(model_path, iteration, gaussians, background,
@@ -146,6 +150,7 @@ def render_single_camera_view(model_path, iteration, gaussians, background,
                               scale=0.2, width=1600, height=1000,
                               camera_idx=-1, fov_deg=1000.0):
     render_dir = os.path.join(model_path, "custom_view", f"ours_{iteration}", "renders")
+    #print(f'render_dir : {render_dir}');    exit()
     makedirs(render_dir, exist_ok=True)
 
     R, T = get_closest_camera_pose("train_cameras_output.txt", camera_idx=camera_idx)
@@ -215,7 +220,7 @@ def render_sets(dataset: ModelParams, iteration: int, pipeline: PipelineParams,
  
         print(f"point_cloud_1.ply path: {pc1_path}")
         print(f"point_cloud.ply path: {pc_path}")
-        
+        #exit()  
         if os.path.exists(pc1_path) and not os.path.exists(pc_path):
             print("point_cloud_1.ply to point_cloud.ply")
             os.makedirs(pc_dir, exist_ok=True)
@@ -226,12 +231,13 @@ def render_sets(dataset: ModelParams, iteration: int, pipeline: PipelineParams,
             os.makedirs(pc_dir, exist_ok=True)
             with open(pc_path, "rb") as f_src, open(pc1_path, "wb") as f_dst:
                 f_dst.write(f_src.read())
-                
+        #print(f'dataset : {dataset}');  exit()        
+        #print(f'gaussians._xyz.shape b4 : {gaussians._xyz.shape}') [0]
         scene_train = Scene(dataset, gaussians, iteration, shuffle=False)
+        #print(f'gaussians._xyz.shape after : {gaussians._xyz.shape}'); [25263, 3] exit() 
         # scene_eval = Scene_Eval(dataset, gaussians, iteration)
 
-        background = torch.tensor([1, 1, 1] if dataset.white_background else [0, 0, 0], dtype=torch.float32,
-                                  device="cuda")
+        background = torch.tensor([1, 1, 1] if dataset.white_background else [0, 0, 0], dtype=torch.float32, device = "cuda")
 
         extract_cameras_to_txt(scene_train.getTrainCameras(), "train_cameras_output.txt")
 

@@ -100,11 +100,14 @@ class OptimizationParams(ParamGroup):
         # VastGaussian Settings
         # The densification starts at the 1000th iteration and ends at the
         # 30, 000th iteration, with an interval of 200 iterations.
-        self.densification_interval = 200
+        #self.densification_interval = 200
+        self.densification_interval = 20
         self.opacity_reset_interval = 3000
-        self.densify_from_iter = 1000
+        #self.densify_from_iter = 1000
+        self.densify_from_iter = 10
         self.densify_until_iter = 30_000
-        self.densify_grad_threshold = 0.0003 ##
+        #self.densify_grad_threshold = 0.0003 ##
+        self.densify_grad_threshold = 0.00003 ##
         self.random_background = False
 
         super().__init__(parser, "Optimization Parameters")

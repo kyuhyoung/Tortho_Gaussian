@@ -96,7 +96,7 @@ class _RasterizeGaussians(torch.autograd.Function):
                 raise ex
         else:
             num_rendered, color, radii, geomBuffer, binningBuffer, imgBuffer = _C.rasterize_gaussians(*args)
-
+        #print(f'num_rendered : {num_rendered}');    exit()  #   0
         ctx.raster_settings = raster_settings
         ctx.num_rendered = num_rendered
         ctx.save_for_backward(colors_precomp, opacities_precomp, means3D, scales, rotations, cov3Ds_precomp, radii, sh,

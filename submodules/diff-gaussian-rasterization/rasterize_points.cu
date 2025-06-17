@@ -58,7 +58,7 @@ RasterizeGaussiansCUDA(
   if (means3D.ndimension() != 2 || means3D.size(1) != 3) {
     AT_ERROR("means3D must have dimensions (num_points, 3)");
   }
-  
+    //std::cout << "test" << std::endl;   exit(0); 
   const int P = means3D.size(0);
   const int H = image_height;
   const int W = image_width;
@@ -86,7 +86,7 @@ RasterizeGaussiansCUDA(
 	  {
 		M = sh.size(1);
       }
-
+        
 	  rendered = CudaRasterizer::Rasterizer::forward(
 	    geomFunc,
 		binningFunc,
