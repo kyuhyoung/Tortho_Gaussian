@@ -42,6 +42,7 @@ class Scene:
         self.test_cameras = {}
         #print(f'args.source_path : {args.source_path}');    exit()
         if os.path.exists(os.path.join(args.source_path, "sparse")):
+            print("Found 'sparse' folder, assuming Colmap dataset!")
             scene_info = sceneLoadTypeCallbacks["Colmap"](args.source_path, args.images, args.eval)
         elif os.path.exists(os.path.join(args.source_path, "transforms_train.json")):
             print("Found transforms_train.json file, assuming Blender data set!")
@@ -69,11 +70,10 @@ class Scene:
             random.shuffle(scene_info.test_cameras)  # Multi-res consistent random shuffling
 
         self.cameras_extent = scene_info.nerf_normalization["radius"]
-        #print(f'resolution_scales : {resolution_scales}');    exit()
+        #print(f'resolution_scales : {resolution_scales}');    exit()    #   [1.0]
         for resolution_scale in resolution_scales:
             print("Loading Training Cameras")
-            self.train_cameras[resolution_scale] = cameraList_from_camInfos(scene_info.train_cameras, resolution_scale,
-                                                                            args)
+            self.train_cameras[resolution_scale] = cameraList_from_camInfos(scene_info.train_cameras, resolution_scale, args)
             print("Loading Test Cameras")
             self.test_cameras[resolution_scale] = cameraList_from_camInfos(scene_info.test_cameras, resolution_scale,
                                                                            args)

@@ -88,7 +88,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         #print(f'viewpoint_cam : {viewpoint_cam}, type(pipe) : {type(pipe)}');    exit()
         render_pkg = render(viewpoint_cam, gaussians, pipe, bg)
         image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
-        t0 = image.min();   t1 = image.max();   print(f'image.shape : {image.shape}, t0 : {t0}, t1 : {t1}'); exit()
+        t0 = image.min();   t1 = image.max();   print(f'\nimage.shape : {image.shape}, t0 : {t0}, t1 : {t1}'); exit()
         #scaler = GradScaler()
 
         # Loss

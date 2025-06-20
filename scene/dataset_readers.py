@@ -60,10 +60,13 @@ def getNerfppNorm(cam_info):
     cam_centers = []
 
     for cam in cam_info:
+        #print(f'cam.image_name : {cam.image_name}')
         W2C = getWorld2View2(cam.R, cam.T)
         C2W = np.linalg.inv(W2C)
         cam_centers.append(C2W[:3, 3:4])
-
+        #print(f'\tW2C : \n{W2C}')
+        #print(f'\tC2W : \n{C2W}')
+    #exit()
     center, diagonal = get_center_and_diag(cam_centers)
     radius = diagonal * 1.1
 
@@ -299,11 +302,13 @@ def storePly(path, xyz, rgb):
 def readColmapSceneInfo(path, images, eval, llffhold=83):
     #print(f'path : {path}, images : {images}, eval : {eval}'); exit()
     try:
+        #print('aaa')
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.bin")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.bin")
         cam_extrinsics = read_extrinsics_binary(cameras_extrinsic_file)
         cam_intrinsics = read_intrinsics_binary(cameras_intrinsic_file)
     except:
+        #print('bbb')
         cameras_extrinsic_file = os.path.join(path, "sparse/0", "images.txt")
         cameras_intrinsic_file = os.path.join(path, "sparse/0", "cameras.txt")
         cam_extrinsics = read_extrinsics_text(cameras_extrinsic_file)

@@ -60,7 +60,7 @@ class _RasterizeGaussians(torch.autograd.Function):
         cov3Ds_precomp,
         raster_settings,
     ):
-
+        #print(f'means3D.shape : {means3D.shape}, means3D.min() : {means3D.min()}, means3D.max() : {means3D.max()}'); exit();
         # Restructure arguments the way that the C++ lib expects them
         args = (
             raster_settings.bg, 

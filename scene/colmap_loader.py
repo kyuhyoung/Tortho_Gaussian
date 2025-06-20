@@ -198,7 +198,7 @@ def read_points3D_binary(path_to_model_file):
         void Reconstruction::ReadPoints3DBinary(const std::string& path)
         void Reconstruction::WritePoints3DBinary(const std::string& path)
     """
-
+    print(f'path_to_model_file : {path_to_model_file}');    exit()
 
     with open(path_to_model_file, "rb") as fid:
         num_points = read_next_bytes(fid, 8, "Q")[0]
@@ -253,6 +253,7 @@ def read_extrinsics_binary(path_to_model_file):
         void Reconstruction::ReadImagesBinary(const std::string& path)
         void Reconstruction::WriteImagesBinary(const std::string& path)
     """
+    print(f'Reading extrinsics from {path_to_model_file}')
     images = {}
     with open(path_to_model_file, "rb") as fid:
         num_reg_images = read_next_bytes(fid, 8, "Q")[0]
@@ -268,6 +269,7 @@ def read_extrinsics_binary(path_to_model_file):
             while current_char != b"\x00":   # look for the ASCII 0 entry
                 image_name += current_char.decode("utf-8")
                 current_char = read_next_bytes(fid, 1, "c")[0]
+            #print(f'image_name : {image_name}, \nqvec : {qvec}, \ntvec : {tvec}')   #   the same as DOGS
             num_points2D = read_next_bytes(fid, num_bytes=8,
                                            format_char_sequence="Q")[0]
             x_y_id_s = read_next_bytes(fid, num_bytes=24*num_points2D,
@@ -279,6 +281,7 @@ def read_extrinsics_binary(path_to_model_file):
                 id=image_id, qvec=qvec, tvec=tvec,
                 camera_id=camera_id, name=image_name,
                 xys=xys, point3D_ids=point3D_ids)
+    #exit()
     return images
 
 
@@ -327,6 +330,7 @@ def read_extrinsics_text(path):
                 image_id = int(elems[0])
                 qvec = np.array(tuple(map(float, elems[1:5])))
                 tvec = np.array(tuple(map(float, elems[5:8])))
+                #print(f'qvec :\n{qvec}');   print(f'tvec :\n{tvec}')
                 camera_id = int(elems[8])
                 image_name = elems[9]
                 elems = fid.readline().split()
@@ -337,6 +341,7 @@ def read_extrinsics_text(path):
                     id=image_id, qvec=qvec, tvec=tvec,
                     camera_id=camera_id, name=image_name,
                     xys=xys, point3D_ids=point3D_ids)
+    #exit()
     return images
 
 

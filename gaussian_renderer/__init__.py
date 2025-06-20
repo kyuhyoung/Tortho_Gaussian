@@ -91,6 +91,8 @@ def render(viewpoint_camera, pc: GaussianModel, pipe, bg_color: torch.Tensor, sc
     else:
         colors_precomp = override_color
 
+
+    print(f'means3D.shape : {means3D.shape}, means3D.min() : {means3D.min()}, means3D.max() : {means3D.max()}'); exit();
     # Rasterize visible Gaussians to image, obtain their radii (on screen).
     rendered_image, radii = rasterizer(
         means3D=means3D,

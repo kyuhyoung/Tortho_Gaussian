@@ -13,7 +13,7 @@ import torch
 from torch import nn
 import numpy as np
 from utils.graphics_utils import getWorld2View2, getProjectionMatrix
-
+from scene.colmap_loader import rotmat2qvec, qvec2rotmat
 
 class SimpleCamera(nn.Module):
     def __init__(self, colmap_id, R, T, FoVx, FoVy, image_name, uid, width, height,
@@ -40,15 +40,12 @@ class SimpleCamera(nn.Module):
 
         self.trans = trans
         self.scale = scale
-        self.world_view_transform = torch.tensor(getWorld2View2(R, T, trans, scale)).transpose(0,
-                                                                                               1).cuda()
-        self.projection_matrix = getProjectionMatrix(znear=self.znear, zfar=self.zfar, fovX=self.FoVx,
-                                                     fovY=self.FoVy).transpose(0, 1).cuda()
+        self.world_view_transform = torch.tensor(getWorld2View2(R, T, trans, scale)).transpose(0, 1).cuda()
+        self.projection_matrix = getProjectionMatrix(znear=self.znear, zfar=self.zfar, fovX = self.FoVx, fovY=self.FoVy).transpose(0, 1).cuda()
         self.full_proj_transform = (
             self.world_view_transform.unsqueeze(0).bmm(self.projection_matrix.unsqueeze(0))).squeeze(
             0)
-        self.camera_center = self.world_view_transform.inverse()[3,
-                             :3]
+        self.camera_center = self.world_view_transform.inverse()[3, :3]
 
 
 class Camera(nn.Module):
@@ -56,6 +53,9 @@ class Camera(nn.Module):
                  image_name, uid,
                  trans=np.array([0.0, 0.0, 0.0]), scale=1.0, data_device="cuda",
                  ):
+        #qvec = rotmat2qvec(R);  qvec_inv = rotmat2qvec(R.T);  print(f'image_name : {image_name}, \nqvec : {qvec}, \nqvec_inv : {qvec_inv}, \nT : {T}');  exit() 
+        #   'T' is the same as colmap output. 'qvec_inv', that is 'R.T' is the same as colmap output
+        #   800779, qvec : (0.0016 -0.7074 0.7067 -0.0016), qvec_inv : (0.0016 0.7074 -0.7067 0.0016), T : (-250, 766, 1373)
         super(Camera, self).__init__()
 
         self.uid = uid
@@ -87,12 +87,15 @@ class Camera(nn.Module):
 
         self.trans = trans
         self.scale = scale
-
+        print(f'image_name : {image_name}')
+        t0 = getWorld2View2(R, T, trans, scale)
+        # Since getWorld2View2 make a 4x4 matriix with the given translation T and the inverse of the given rotation R, it is the same as making a 4x4 matriix with the colmap output. 
         self.world_view_transform = torch.tensor(getWorld2View2(R, T, trans, scale)).transpose(0, 1).cuda()
-        self.projection_matrix = getProjectionMatrix(znear=self.znear, zfar=self.zfar, fovX=self.FoVx,
-                                                     fovY=self.FoVy).transpose(0, 1).cuda()
-        self.full_proj_transform = (
-            self.world_view_transform.unsqueeze(0).bmm(self.projection_matrix.unsqueeze(0))).squeeze(0)
+        #   world_view_transform is the right-multiply form of 4x4 transform matirix made of colmap extrinsic params.
+        #print(f't0 : \n{t0}, \nself.world_view_transform : \n{self.world_view_transform}');   exit()    #   
+        self.projection_matrix = getProjectionMatrix(znear = self.znear, zfar = self.zfar, fovX = self.FoVx, fovY = self.FoVy).transpose(0, 1).cuda()
+        #   projection_matrix is the right-multiply form of 4x4 matrix made of colmap focal length and image shape
+        self.full_proj_transform = (self.world_view_transform.unsqueeze(0).bmm(self.projection_matrix.unsqueeze(0))).squeeze(0)
         self.camera_center = self.world_view_transform.inverse()[3, :3]
 
     def __str__(self):

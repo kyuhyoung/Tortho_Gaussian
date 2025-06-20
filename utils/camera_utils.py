@@ -57,8 +57,12 @@ def cameraList_from_camInfos(cam_infos, resolution_scale, args):
     camera_list = []
 
     for id, c in enumerate(cam_infos):
-        print(f'id : {id} / {len(cam_infos)}')
-        camera_list.append(loadCam(args, id, c, resolution_scale))
+        print(f'id : {id} / {len(cam_infos)} from {c.image_name}')
+        #camera_list.append(loadCam(args, id, c, resolution_scale))
+        kam = loadCam(args, id, c, resolution_scale)
+        print(f'\tkam.projection_matrix : \n{kam.projection_matrix}')
+        print(f'\tkam.world_view_transform : \n{kam.world_view_transform}')
+        camera_list.append(kam)
 
     return camera_list
 

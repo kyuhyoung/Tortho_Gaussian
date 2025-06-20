@@ -36,25 +36,34 @@ def getWorld2View(R, t):
     return np.float32(Rt)
 
 def getWorld2View2(R, t, translate=np.array([.0, .0, .0]), scale=1.0):
+    #aa = bb
+    # With translate (0, 0, 0) and scale 1, getWorld2View2 make a 4x4 matriix with the given translation T and the inverse of the given rotation R. 
     Rt = np.zeros((4, 4))
     Rt[:3, :3] = R.transpose()
     Rt[:3, 3] = t
     Rt[3, 3] = 1.0
-
+    #iprint(f'\tRt b4 :\n {Rt}')
     C2W = np.linalg.inv(Rt)
     cam_center = C2W[:3, 3]
     cam_center = (cam_center + translate) * scale
     C2W[:3, 3] = cam_center
     Rt = np.linalg.inv(C2W)
+    '''
+    print(f'\ttranslate : {translate}, scale : {scale}')
+    print(f'\tRt after :\n {Rt}');    #exit()
+    '''
     return np.float32(Rt)
 
 def getProjectionMatrix(znear, zfar, fovX, fovY):
-    tanHalfFovY = math.tan((fovY / 2))
-    tanHalfFovX = math.tan((fovX / 2))
+    #print(f'znear : {znear}, zfar : {zfar}, fovX : {fovX}, fovY : {fovY}');   exit()    
+    # 0.01, 100, 0.6727, 0.9827   
+    # fovX is 2 * atan(image_width / (2 * focal_length)). So for the case of image 800779.tif, fovX is 0.6727 = 2 * atan(11310 / (2 * 16173.8))  
+    tanHalfFovY = math.tan((fovY / 2))  #   = width / (2 * focal_length), that is half width when focal length is 1
+    tanHalfFovX = math.tan((fovX / 2))  #   = height / (2 * focal_length), that is half height when focal length is 1
 
-    top = tanHalfFovY * znear
+    top = tanHalfFovY * znear   #   half height when focal length is znear   
     bottom = -top
-    right = tanHalfFovX * znear
+    right = tanHalfFovX * znear #   half width when focal length is znear
     left = -right
 
     P = torch.zeros(4, 4)
@@ -72,8 +81,8 @@ def getProjectionMatrix(znear, zfar, fovX, fovY):
 
 ######
 def getOrthographicProjectionMatrix(znear, zfar, fovX, fovY):
-    tanHalfFovY = math.tan(fovY / 2)
-    tanHalfFovX = math.tan(fovX / 2)
+    tanHalfFovY = math.tan(fovY / 2)    #   = half_height / focal_length
+    tanHalfFovX = math.tan(fovX / 2)    #   = half_width / focal_length
 
     # top = tanHalfFovY * zfar / 100
     # bottom = -top
@@ -81,7 +90,7 @@ def getOrthographicProjectionMatrix(znear, zfar, fovX, fovY):
     # left = -right
     top = 6.0
     bottom = -top
-    right = tanHalfFovX / tanHalfFovY * 6.0 
+    right = tanHalfFovX / tanHalfFovY * 6.0 #   If fact "tanHalfFovX / tanHalfFovY" is the same as "half_width / half_height" that is again the same as "width / height", that is the aspect ratio.  Since "fovX" and "fovY" are only used to get "right", we do not need "fovX" and "fovY".  We just the need the aspect ratio or "width" and "height" of the image we.
     left = -right
     # top = tanHalfFovY * znear
     # bottom = -top

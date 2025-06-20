@@ -251,12 +251,17 @@ __global__ void preprocessCUDA(
     int wid = rect_max.x - rect_min.x, hei = rect_max.y - rect_min.y;
     if ((rect_max.x - rect_min.x) * (rect_max.y - rect_min.y) == 0)
     {
-        //printf("rectangle is degenerated : wid : %d, hei : %d\t", wid, hei);
+        //printf("p_orig.x : %f, p_orig.y : %f, p_orig.z : %f, projmatrix : ( %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f )\n", p_orig.x, p_orig.y, p_orig.z, projmatrix[0], projmatrix[1], projmatrix[2], projmatrix[3], projmatrix[4], projmatrix[5], projmatrix[6], projmatrix[7], projmatrix[8], projmatrix[9], projmatrix[10], projmatrix[11],projmatrix[12], projmatrix[13], projmatrix[14], projmatrix[15]);
+
+        //printf("p_proj.x : %f, p_proj.y : %f, p_proj.z : %f, W : %d, H : %d\n", p_proj.x, p_proj.y, p_proj.z, W, H);
+        //printf("my_radius : %f, point_image.x : %f, point_image.y : %f\n", my_radius, point_image.x, point_image.y);
+        //printf("rectangle is degenerated : rect_max.x : %d, rect_min.x : %d, rect_max.y : %d, rect_min.y : %d\n", rect_max.x, rect_min.x, rect_max.y, rect_min.y);  //  all are degenerted with hei == 0
         //assert(false);
         //  all positive det 
         return;
     }
-    //printf("rectangle is not line : wid : %d, hei : %d\t", wid, hei);   //  all positive det 
+    //printf("my_radius : %f, point_image.x : %f, point_image.y : %f\n", my_radius, point_image.x, point_image.y);
+    //printf("rectangle is not line : wid : %d, hei : %d\t", wid, hei);   //  nothing is rectangle. All are line of hei == 0 
     if (colors_precomp == nullptr)
     {
         glm::vec3 result = computeColorFromSH(idx, D, M, (glm::vec3*)orig_points, *cam_pos, shs, clamped1);
